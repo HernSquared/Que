@@ -1,12 +1,21 @@
 
 import PlaceholderScreen from "../../components/PlaceholderScreen";
 
+import { translations } from "../../constants/translations";
+import { useLanguage } from "../../context/LanguageContext";
+
 export default function ProgressScreen() {
+  const { language } = useLanguage();
+  const t = translations[language ?? "spanish"];
+
   return (
     <PlaceholderScreen
-      title="Your Progress"
+      title={t.progressTitle}
       emoji="📊"
-      description="Your completed lessons, learned vocabulary, and statistics will appear here."
+      description={
+        `${t.progressDescription}\n\n` +
+        t.progressComingSoonDescription
+      }
     />
   );
 }

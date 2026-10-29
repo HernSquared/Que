@@ -13,10 +13,15 @@ import { router, useLocalSearchParams } from "expo-router";
 import Flashcard from "../../components/Flashcard";
 import ProgressBar from "../../components/ProgressBar";
 import { COLORS } from "../../constants/theme";
+import { translations } from "../../constants/translations";
+import { useLanguage } from "../../context/LanguageContext";
 import { vocabulary } from "../../data/vocabulary";
 
 export default function LessonScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { language } = useLanguage();
+
+  const t = translations[language ?? "spanish"];
 
   const [index, setIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -42,26 +47,51 @@ export default function LessonScreen() {
     }
   }
 
+  function handleRestart() {
+    setIndex(0);
+    setShowAnswer(false);
+    setCompleted(false);
+  }
+
   if (id !== "1") {
     return (
       <SafeAreaView style={styles.container}>
-        <Text>Lesson not found.</Text>
+        <View style={styles.notFound}>
+          <Text style={styles.lessonTitle}>
+            {t.lessonNotFound}
+          </Text>
+
+          <Pressable onPress={() => router.back()}>
+            <Text style={styles.link}>
+              {t.backToLearning}
+            </Text>
+          </Pressable>
+        </View>
       </SafeAreaView>
     );
   }
 
+  const buttonLabel = completed
+    ? t.backToLearning
+    : !showAnswer
+    ? t.revealTranslation
+    : index === vocabulary.length - 1
+    ? t.finishLesson
+    : t.nextWord;
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
+        {/* Lesson progress */}
         <View style={styles.progressSection}>
           <View style={styles.progressHeader}>
             <Text style={styles.lessonTitle}>
-              Everyday Words
+              {t.lessonTitle}
             </Text>
 
             <Text style={styles.counter}>
               {completed
-                ? "Completed"
+                ? "✓"
                 : `${index + 1} / ${vocabulary.length}`}
             </Text>
           </View>
@@ -69,15 +99,27 @@ export default function LessonScreen() {
           <ProgressBar progress={progress} />
         </View>
 
+        {/* Vocabulary card */}
         {completed ? (
           <View style={styles.completeCard}>
             <Text style={styles.celebration}>🎉</Text>
+
             <Text style={styles.completeTitle}>
-              Lesson Complete!
+              {t.lessonComplete}
             </Text>
+
             <Text style={styles.completeDescription}>
-              You reviewed all {vocabulary.length} words!
+                {t.completeDescription.replace(
+                  "{count}",
+                  String(vocabulary.length)
+                )}
             </Text>
+
+            <Pressable onPress={handleRestart}>
+              <Text style={styles.link}>
+                {t.practiceAgain}
+              </Text>
+            </Pressable>
           </View>
         ) : (
           <Flashcard
@@ -86,21 +128,19 @@ export default function LessonScreen() {
           />
         )}
 
+        {/* Main action button */}
         <Pressable
-          style={styles.button}
+          style={({ pressed }) => [
+            styles.button,
+            pressed && styles.pressed,
+          ]}
           onPress={
             completed ? () => router.back() : handleNext
           }
           accessibilityRole="button"
         >
           <Text style={styles.buttonText}>
-            {completed
-              ? "Back to Learning"
-              : !showAnswer
-              ? "Reveal Translation"
-              : index === vocabulary.length - 1
-              ? "Finish Lesson"
-              : "Next Word →"}
+            {buttonLabel} →
           </Text>
         </Pressable>
       </View>
@@ -147,6 +187,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "800",
   },
+  pressed: {
+    opacity: 0.85,
+  },
   completeCard: {
     flex: 1,
     backgroundColor: COLORS.surface,
@@ -170,5 +213,18 @@ const styles = StyleSheet.create({
     color: COLORS.secondaryText,
     marginTop: 12,
     textAlign: "center",
+    lineHeight: 24,
+  },
+  link: {
+    color: COLORS.primary,
+    fontSize: 16,
+    fontWeight: "700",
+    marginTop: 24,
+  },
+  notFound: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
   },
 });

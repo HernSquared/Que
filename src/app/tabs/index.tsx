@@ -1,6 +1,4 @@
 
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { router } from "expo-router";
 import {
   Pressable,
   SafeAreaView,
@@ -9,10 +7,19 @@ import {
   Text,
   View,
 } from "react-native";
+
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
+
 import LessonCard from "../../components/LessonCard";
 import { COLORS } from "../../constants/theme";
+import { translations } from "../../constants/translations";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function HomeScreen() {
+  const { language } = useLanguage();
+  const t = translations[language ?? "spanish"];
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -21,16 +28,18 @@ export default function HomeScreen() {
       >
         <View style={styles.header}>
           <Text style={styles.logo}>Qué!</Text>
+
           <View style={styles.streak}>
-            <Text>🔥 0</Text>
+            <Text style={styles.streakText}>🔥 0</Text>
           </View>
         </View>
 
         <Text style={styles.eyebrow}>
-          YOUR LANGUAGE JOURNEY
+          {t.journey}
         </Text>
+
         <Text style={styles.heading}>
-          Let's learn something new.
+          {t.greeting}
         </Text>
 
         <View style={styles.statsRow}>
@@ -40,9 +49,13 @@ export default function HomeScreen() {
               size={26}
               color={COLORS.primary}
             />
-            <Text style={styles.statValue}>0 / 10</Text>
+
+            <Text style={styles.statValue}>
+              0 / 10
+            </Text>
+
             <Text style={styles.statLabel}>
-              Lessons completed
+              {t.lessonsCompleted}
             </Text>
           </View>
 
@@ -52,49 +65,57 @@ export default function HomeScreen() {
               size={26}
               color={COLORS.warning}
             />
-            <Text style={styles.statValue}>A1</Text>
+
+            <Text style={styles.statValue}>
+              A1
+            </Text>
+
             <Text style={styles.statLabel}>
-              Beginner level
+              {t.beginnerLevel}
             </Text>
           </View>
         </View>
 
         <LessonCard
-          title="Everyday Words"
-          description="Learn your first 10 Spanish words."
+          title={t.lessonTitle}
+          description={t.lessonDescription}
           lessonId="1"
+          buttonLabel={t.startLearning}
+          lessonLabel={t.lessonNumber}
         />
 
         <Text style={styles.sectionTitle}>
-          Explore
+          {t.explore}
         </Text>
 
         <View style={styles.exploreRow}>
           <Pressable
             style={styles.exploreCard}
-            onPress={() => router.push("../tabs/learn")}
+            onPress={() => router.push("/(tabs)/learn")}
           >
             <Ionicons
               name="book-outline"
               size={28}
               color={COLORS.primary}
             />
+
             <Text style={styles.exploreText}>
-              Lessons →
+              {t.lessons} →
             </Text>
           </Pressable>
 
           <Pressable
             style={styles.exploreCard}
-            onPress={() => router.push("/tabs/games")}
+            onPress={() => router.push("/(tabs)/games")}
           >
             <Ionicons
               name="game-controller-outline"
               size={28}
               color={COLORS.success}
             />
+
             <Text style={styles.exploreText}>
-              Games →
+              {t.games} →
             </Text>
           </Pressable>
         </View>
@@ -127,6 +148,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     padding: 12,
     borderRadius: 20,
+  },
+  streakText: {
+    color: COLORS.text,
+    fontWeight: "700",
   },
   eyebrow: {
     color: COLORS.secondaryText,

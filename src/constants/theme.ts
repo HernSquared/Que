@@ -68,12 +68,12 @@ export const MaxContentWidth = 800;
 // Qué! application design system
 
 export const COLORS = {
-  background: "#F7F8FC",
+  background: "#9ba6d3",
   surface: "#FFFFFF",
   primary: "#4F6EF7",
   primaryLight: "#EEF2FF",
   text: "#17213A",
-  secondaryText: "#7C89A2",
+  secondaryText: "#5a5a5a",
   border: "#E2E8F0",
   success: "#16A34A",
   warning: "#F59E0B",
@@ -83,4 +83,4 @@ export const RADIUS = {
   small: 12,
   medium: 18,
   large: 26,
-} as const; 
+} as const;

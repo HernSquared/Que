@@ -1,7 +1,11 @@
 
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Tabs } from "expo-router";
+import React from "react";
+
 import { COLORS } from "../../constants/theme";
+import { translations } from "../../constants/translations";
+import { useLanguage } from "../../context/LanguageContext";
 
 type IconName =
   React.ComponentProps<typeof Ionicons>["name"];
@@ -15,13 +19,15 @@ const icons: Record<string, IconName> = {
 };
 
 export default function TabLayout() {
+  const { language } = useLanguage();
+  const t = translations[language ?? "spanish"];
+
   return (
     <Tabs
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor:
-          COLORS.secondaryText,
+        tabBarInactiveTintColor: COLORS.secondaryText,
         tabBarStyle: {
           backgroundColor: COLORS.surface,
           borderTopColor: COLORS.border,
@@ -37,46 +43,39 @@ export default function TabLayout() {
           <Ionicons
             name={icons[route.name] ?? "ellipse-outline"}
             size={size}
-                color={
-                  typeof color === "string" ? color : COLORS.primary
-                }
+            color={
+              typeof color === "string"
+                ? color
+                : COLORS.primary
+            }
           />
         ),
       })}
     >
       <Tabs.Screen
         name="index"
-        options={{ title: "Home" }}
+        options={{ title: t.home }}
       />
+
       <Tabs.Screen
         name="learn"
-        options={{ title: "Learn" }}
+        options={{ title: t.lessons }}
       />
+
       <Tabs.Screen
         name="games"
-        options={{ title: "Games" }}
+        options={{ title: t.games }}
       />
+
       <Tabs.Screen
         name="progress"
-        options={{ title: "Progress" }}
+        options={{ title: t.progress }}
       />
+
       <Tabs.Screen
         name="profile"
-        options={{ title: "Profile" }}
+        options={{ title: t.profile }}
       />
     </Tabs>
   );
 }
-// import { Tabs } from "expo-router";
-
-// export default function TabLayout() {
-//   return (
-//     <Tabs screenOptions={{ headerShown: false }}>
-//       <Tabs.Screen name="index" options={{ title: "Home" }} />
-//       <Tabs.Screen name="learn" options={{ title: "Learn" }} />
-//       <Tabs.Screen name="games" options={{ title: "Games" }} />
-//       <Tabs.Screen name="progress" options={{ title: "Progress" }} />
-//       <Tabs.Screen name="profile" options={{ title: "Profile" }} />
-//     </Tabs>
-//   );
-// }

@@ -8,20 +8,25 @@ import {
 } from "react-native";
 import { COLORS } from "../constants/theme";
 
+
 interface Props {
   title: string;
   description: string;
   lessonId: string;
+  buttonLabel?: string;
+  lessonLabel?: string;
 }
 
 export default function LessonCard({
   title,
   description,
   lessonId,
+  buttonLabel = "Start Learning",
+  lessonLabel = "LESSON 01",
 }: Props) {
   return (
     <View style={styles.card}>
-      <Text style={styles.label}>LESSON 01</Text>
+      <Text style={styles.label}>{lessonLabel}</Text>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.description}>
         {description}
@@ -41,7 +46,7 @@ export default function LessonCard({
         accessibilityRole="button"
       >
         <Text style={styles.buttonText}>
-          Start Learning →
+          {buttonLabel}  →
         </Text>
       </Pressable>
     </View>

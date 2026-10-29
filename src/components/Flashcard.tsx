@@ -1,10 +1,9 @@
 
-import {
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+
 import { COLORS } from "../constants/theme";
+import { translations } from "../constants/translations";
+import { useLanguage } from "../context/LanguageContext";
 import type { VocabularyWord } from "../types/vocabulary";
 
 interface Props {
@@ -16,19 +15,41 @@ export default function Flashcard({
   word,
   showAnswer,
 }: Props) {
+  const { language } = useLanguage();
+  const t = translations[language ?? "spanish"];
+  const learningSpanish = language === "spanish";
+
+  const question = learningSpanish
+    ? word.english
+    : word.spanish;
+
+  const answer = learningSpanish
+    ? word.spanish
+    : word.english;
+
+  const direction = learningSpanish
+    ? "ENGLISH → SPANISH"
+    : "ESPAÑOL → ENGLISH";
+
   return (
     <View style={styles.card}>
       <View style={styles.badge}>
         <Text style={styles.badgeText}>
-          ENGLISH → SPANISH
+          {direction}
         </Text>
       </View>
 
       <View style={styles.center}>
-        <Text style={styles.emoji}>{word.emoji}</Text>
-        <Text style={styles.word}>{word.english}</Text>
+        <Text style={styles.emoji}>
+          {word.emoji}
+        </Text>
+
+        <Text style={styles.word}>
+          {question}
+        </Text>
+
         <Text style={styles.description}>
-          How do you say this in Spanish?
+          {t.flashcardPrompt}
         </Text>
       </View>
 
@@ -36,15 +57,16 @@ export default function Flashcard({
         {showAnswer ? (
           <>
             <Text style={styles.answerLabel}>
-              SPANISH TRANSLATION
+              {t.translationLabel}
             </Text>
+
             <Text style={styles.answer}>
-              {word.spanish}
+              {answer}
             </Text>
           </>
         ) : (
           <Text style={styles.hint}>
-            Tap below to reveal
+            {t.flashcardHint}
           </Text>
         )}
       </View>
@@ -114,6 +136,7 @@ const styles = StyleSheet.create({
     color: COLORS.success,
     fontWeight: "800",
     marginTop: 6,
+    textAlign: "center",
   },
   hint: {
     color: COLORS.secondaryText,

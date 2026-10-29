@@ -1,8 +1,18 @@
 
 import { Stack } from "expo-router";
-import { COLORS } from "../constants/theme";
 
-export default function RootLayout() {
+import {
+  LanguageProvider,
+  useLanguage,
+} from "../context/LanguageContext";
+
+import { COLORS } from "../constants/theme";
+import { translations } from "../constants/translations";
+
+function AppNavigator() {
+  const { language } = useLanguage();
+  const t = translations[language ?? "spanish"];
+
   return (
     <Stack
       screenOptions={{
@@ -12,12 +22,15 @@ export default function RootLayout() {
         },
       }}
     >
-      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="index" />
+
+      <Stack.Screen name="tabs" />
+
       <Stack.Screen
         name="lesson/[id]"
         options={{
           headerShown: true,
-          title: "Vocabulary Lesson",
+          title: t.lessonHeader,
           headerTintColor: COLORS.primary,
           headerStyle: {
             backgroundColor: COLORS.background,
@@ -25,5 +38,13 @@ export default function RootLayout() {
         }}
       />
     </Stack>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <LanguageProvider>
+      <AppNavigator />
+    </LanguageProvider>
   );
 }
