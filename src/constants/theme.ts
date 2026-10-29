@@ -63,3 +63,24 @@ export const Spacing = {
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 800;
+
+
+// Qué! application design system
+
+export const COLORS = {
+  background: "#F7F8FC",
+  surface: "#FFFFFF",
+  primary: "#4F6EF7",
+  primaryLight: "#EEF2FF",
+  text: "#17213A",
+  secondaryText: "#7C89A2",
+  border: "#E2E8F0",
+  success: "#16A34A",
+  warning: "#F59E0B",
+} as const;
+
+export const RADIUS = {
+  small: 12,
+  medium: 18,
+  large: 26,
+} as const; 
