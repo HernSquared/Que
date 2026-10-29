@@ -1,98 +1,179 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useState } from "react";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  SafeAreaView,
+} from "react-native";
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+const vocabulary = [
+  { english: "Hello", spanish: "Hola" },
+  { english: "Goodbye", spanish: "Adiós" },
+  { english: "Thank you", spanish: "Gracias" },
+  { english: "House", spanish: "Casa" },
+  { english: "Book", spanish: "Libro" },
+  { english: "Water", spanish: "Agua" },
+  { english: "Cat", spanish: "Gato" },
+  { english: "Dog", spanish: "Perro" },
+  { english: "Apple", spanish: "Manzana" },
+  { english: "Friend", spanish: "Amigo" },
+];
 
 export default function HomeScreen() {
+  const [index, setIndex] = useState(0);
+  const [showAnswer, setShowAnswer] = useState(false);
+
+  const currentWord = vocabulary[index];
+
+  function nextWord() {
+    setIndex((previous) =>
+      (previous + 1) % vocabulary.length
+    );
+    setShowAnswer(false);
+  }
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        <Text style={styles.title}>Bilingual</Text>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+        <Text style={styles.subtitle}>
+          Learn Spanish through games!
+        </Text>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+        <View style={styles.progressContainer}>
+          <Text style={styles.progress}>
+            Lesson 1: Everyday Words
+          </Text>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+          <Text style={styles.progress}>
+            Word {index + 1} of {vocabulary.length}
+          </Text>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.label}>
+            Translate this word:
+          </Text>
+
+          <Text style={styles.word}>
+            {currentWord.english}
+          </Text>
+
+          {showAnswer ? (
+            <Text style={styles.answer}>
+              {currentWord.spanish}
+            </Text>
+          ) : (
+            <Text style={styles.hint}>
+              Tap below to reveal
+            </Text>
+          )}
+        </View>
+
+        <Pressable
+          style={styles.button}
+          onPress={() => setShowAnswer(true)}
+        >
+          <Text style={styles.buttonText}>
+            Show Translation
+          </Text>
+        </Pressable>
+
+        <Pressable
+          style={styles.nextButton}
+          onPress={nextWord}
+        >
+          <Text style={styles.buttonText}>
+            Next Word
+          </Text>
+        </Pressable>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: "#F5F7FB",
   },
-  safeArea: {
+  content: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    padding: 24,
+    justifyContent: "center",
   },
   title: {
-    textAlign: 'center',
+    fontSize: 36,
+    fontWeight: "bold",
+    color: "#2563EB",
+    textAlign: "center",
   },
-  code: {
-    textTransform: 'uppercase',
+  subtitle: {
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 8,
+    color: "#64748B",
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  progressContainer: {
+    marginTop: 40,
+    marginBottom: 20,
+  },
+  progress: {
+    fontSize: 16,
+    marginBottom: 8,
+    fontWeight: "500",
+    color: "#334155",
+  },
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    padding: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 220,
+    elevation: 4,
+  },
+  label: {
+    fontSize: 16,
+    color: "#64748B",
+  },
+  word: {
+    fontSize: 36,
+    fontWeight: "bold",
+    marginTop: 20,
+    color: "#0F172A",
+  },
+  answer: {
+    fontSize: 30,
+    color: "#16A34A",
+    marginTop: 20,
+    fontWeight: "bold",
+  },
+  hint: {
+    fontSize: 14,
+    color: "#94A3B8",
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: "#2563EB",
+    padding: 18,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 25,
+  },
+  nextButton: {
+    backgroundColor: "#0F172A",
+    padding: 18,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 12,
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
